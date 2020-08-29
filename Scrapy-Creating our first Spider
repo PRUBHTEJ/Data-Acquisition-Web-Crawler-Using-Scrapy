@@ -1,0 +1,25 @@
+import scrapy
+
+class QuoteSpider(scrapy.Spider):
+    name = "quotes_spider"
+    
+    def start_requests(self): #This method allows us to make Post/Get requests to a particular URL.
+        urls = [
+            'http://quotes.toscrape.com/page/1/', # We're going to scrape a quotes website
+            'http://quotes.toscrape.com/page/2/',
+              ]
+        
+        #Generator Function
+        
+        for url in urls:
+            yield scrapy.Request(url=url, callback = self.parse) #Defining a callback method
+         
+        
+    def parse(self,response): # This parse method knows what to do with a particular response.
+        page = response.url.split("/")[-2] #We want to know, from which page the response is coming and we're splitting it along the / and the response will be saved in a HTML file, locally.
+        filename = 'quotes-%s.html'%page
+        with open(filename, 'wb') as f:
+            f.write(response.body)
+        self.log('Saved file %s' %filename)    
+        
+        # Hence, we're able to parse a whole webpage and save it as an HTML file.
